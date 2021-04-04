@@ -1,4 +1,5 @@
 const express = require('express');
+//import path 
 const path = require('path');
 const db = require('./config/connection');
 // import ApolloServer

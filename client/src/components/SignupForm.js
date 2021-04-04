@@ -1,10 +1,19 @@
 import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 
-import { createUser } from '../utils/API';
 import Auth from '../utils/auth';
+//import { createUser } from '../utils/API';
+
+//import Add_User Api from mutations instead
+import { ADD_USER } from '../utils/mutations';
+//import useMutation Apollo
+import { useMutation } from '@apollo/react-hooks';
+
+
 
 const SignupForm = () => {
+  //create const for UseMutation ADD_USER
+  const [addUser, {error}] = useMutation(ADD_USER);
   // set initial form state
   const [userFormData, setUserFormData] = useState({ username: '', email: '', password: '' });
   // set state for form validation
@@ -26,17 +35,30 @@ const SignupForm = () => {
       event.preventDefault();
       event.stopPropagation();
     }
+    //change these to correct Data from ADD_USER
+    // /////////////////////////////////////
+    // try {
+    //   const response = await createUser(userFormData);
 
+    //   if (!response.ok) {
+    //     throw new Error('something went wrong!');
+    //   }
+
+    //   const { token, user } = await response.json();
+    //   console.log(user);
     try {
-      const response = await createUser(userFormData);
-
-      if (!response.ok) {
+      const { data } = await addUser ({
+        variables: { ...userFormData }
+      })
+      
+      if (error) {
         throw new Error('something went wrong!');
       }
+      
+      console.log(data.user);
 
-      const { token, user } = await response.json();
-      console.log(user);
-      Auth.login(token);
+      Auth.login(data.addUser.token);
+
     } catch (err) {
       console.error(err);
       setShowAlert(true);
